@@ -33,6 +33,7 @@ class BSkyComponent extends PositionComponent
     anchor = Anchor.topLeft;
     size = world.size;
     position = Vector2.zero();
+    priority = -1;
 
     add(
       RectangleComponent(

@@ -52,8 +52,7 @@ class BCloudComponent extends SpriteComponent
 
   @override
   void update(double dt) {
-    position =
-        _relativePosition - Vector2.copy(world.playerPosition) * _depthFactor;
+    position = _relativePosition - world.playerPosition * _depthFactor;
     _relativePosition.x += _depthFactor * 50 * dt;
 
     if (_relativePosition.x > world.size.x) {

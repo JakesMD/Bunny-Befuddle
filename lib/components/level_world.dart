@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bunny_befuddle/components/_components.dart';
+import 'package:bunny_befuddle/models/_models.dart';
 import 'package:flame/components.dart';
 
 /// {@template BLevelWorld}
@@ -10,7 +11,10 @@ import 'package:flame/components.dart';
 /// {@endtemplate}
 class BLevelWorld extends World with HasGameReference {
   /// {@macro BLevelWorld}
-  BLevelWorld({required this.camera});
+  BLevelWorld({required this.level, required this.camera});
+
+  /// The level that is being played.
+  BLevel level;
 
   /// The camera that is viewing the world.
   ///
@@ -26,6 +30,11 @@ class BLevelWorld extends World with HasGameReference {
   @override
   FutureOr<void> onLoad() {
     add(BSkyComponent(numberOfClouds: 50));
-    camera.moveTo(size / 2);
+
+    for (final block in level.blocks()) {
+      add(BBlockComponent.fromEntity(block));
+    }
+
+    camera.moveTo(size * 0.5);
   }
 }
