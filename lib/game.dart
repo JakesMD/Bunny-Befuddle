@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:ui';
 
+import 'package:bunny_befuddle/components/_components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_audio/flame_audio.dart';
@@ -9,15 +9,18 @@ import 'package:flame_audio/flame_audio.dart';
 class BGame extends FlameGame with HasKeyboardHandlerComponents {
   @override
   Future<void> onLoad() async {
-    unawaited(FlameAudio.bgm.play('background_music.mp3', volume: 0.5));
+    unawaited(FlameAudio.bgm.play('background_music.mp3', volume: 0.25));
+
+    add(
+      RouterComponent(
+        routes: {'level1': WorldRoute(() => BLevelWorld(camera: camera))},
+        initialRoute: 'level1',
+      ),
+    );
   }
 
   @override
-  Color backgroundColor() => const Color(0xffD0F4F7);
-
-  @override
   void onDispose() {
-    super.onDispose();
     FlameAudio.bgm.dispose();
   }
 }
