@@ -146,9 +146,6 @@ class BBunnyComponent extends PositionComponent
     if (world.level.fetchBlock(newPos) == null) {
       _position3D.x = newPos.x;
       _position3D.y = newPos.y;
-    } else {
-      _velocity.x = 0;
-      _velocity.y = 0;
     }
   }
 
