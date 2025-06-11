@@ -1,0 +1,22 @@
+name: build_and_deploy
+description: Builds and deploys the web app to GitHub Pages
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: 🏗️ Build Web App
+      shell: bash
+      run: flutter build web
+
+    - name: 🔧 Setup GitHub Pages
+      uses: actions/configure-pages@v5
+
+    - name: 📤 Upload Production App
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: "./build/web"
+
+    - name: 🚀 Deploy Production Website and App
+      id: deployment
+      uses: actions/deploy-pages@v4
