@@ -51,11 +51,17 @@ class BCloudComponent extends SpriteComponent {
     priority = (_depthFactor * 10).toInt();
     anchor = Anchor.center;
 
+    const largestWidth = 216 * 1.5;
+
     if (_random.nextBool()) flipHorizontallyAroundCenter();
 
     _relativePosition = Vector2(
-      (isSpawn ? 0 : _random.nextInt((skySize.x + size.x).toInt())).toDouble() -
-          size.x * 0.5,
+      (isSpawn
+              ? 0.0
+              : _random
+                    .nextInt((skySize.x + largestWidth * 2).toInt())
+                    .toDouble()) -
+          largestWidth,
       _random.nextInt(skySize.y.toInt()).toDouble(),
     );
   }
