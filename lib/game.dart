@@ -4,12 +4,16 @@ import 'package:bunny_befuddle/components/_components.dart';
 import 'package:bunny_befuddle/levels/_levels.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame_audio/flame_audio.dart';
+import 'package:flutter/foundation.dart';
 
 /// The main game class for Bunny Befuddle.
 class BGame extends FlameGame with HasKeyboardHandlerComponents {
   @override
   Future<void> onLoad() async {
-    // unawaited(FlameAudio.bgm.play('background_music.mp3', volume: 0.25));
+    if (!kDebugMode) {
+      unawaited(FlameAudio.bgm.play('background_music.mp3', volume: 0.25));
+    }
 
     add(
       RouterComponent(
@@ -25,6 +29,6 @@ class BGame extends FlameGame with HasKeyboardHandlerComponents {
 
   @override
   void onDispose() {
-    // FlameAudio.bgm.dispose();
+    if (!kDebugMode) FlameAudio.bgm.dispose();
   }
 }
