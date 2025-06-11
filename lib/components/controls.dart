@@ -74,7 +74,6 @@ class BControls extends PositionComponent {
     _jumpButton = BControlButton(
       imageSrc: 'control_jump.png',
       onPressed: onJumpPressed,
-      onReleased: onDirectionReleased,
     );
 
     add(_leftButton);
