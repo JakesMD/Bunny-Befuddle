@@ -1,0 +1,157 @@
+import 'package:bunny_befuddle/components/_components.dart';
+import 'package:bunny_befuddle/config.dart';
+import 'package:bunny_befuddle/extensions/_extensions.dart';
+import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
+import 'package:flutter/services.dart';
+
+/// The player component.
+///
+/// This component handles the player's movement and animation by listening to
+/// keyboard inputs.
+class BBunnyComponent extends PositionComponent
+    with KeyboardHandler, HasWorldReference<BLevelWorld> {
+  late Vector3 _position3D;
+  Vector3 _velocity = Vector3.zero();
+  bool _isFalling = false;
+
+  late SpriteAnimationComponent _walkComponent;
+  late SpriteAnimationComponent _idleComponent;
+  late SpriteComponent _jumpComponent;
+
+  @override
+  Future<void> onLoad() async {
+    await Flame.images.loadAll([
+      'bunny_2_jump.png',
+      'bunny_2_ready.png',
+      'bunny_2_stand.png',
+      'bunny_2_walk1.png',
+      'bunny_2_walk2.png',
+    ]);
+
+    _position3D = Vector3.copy(world.level.startPosition);
+    _updatePositionAndPriority();
+
+    final walkAnimation = SpriteAnimation.spriteList([
+      Sprite(Flame.images.fromCache('bunny_2_walk1.png')),
+      Sprite(Flame.images.fromCache('bunny_2_walk2.png')),
+    ], stepTime: 0.12);
+
+    _walkComponent = SpriteAnimationComponent(
+      animation: walkAnimation,
+      scale: Vector2.all(0.3),
+      anchor: Anchor.bottomCenter,
+      position: Vector2.zero(),
+    );
+
+    final idleAnimation = SpriteAnimation.spriteList([
+      Sprite(Flame.images.fromCache('bunny_2_ready.png')),
+      Sprite(Flame.images.fromCache('bunny_2_stand.png')),
+    ], stepTime: 0.3);
+
+    _idleComponent = SpriteAnimationComponent(
+      animation: idleAnimation,
+      scale: Vector2.all(0.3),
+      anchor: Anchor.bottomCenter,
+      position: Vector2.zero(),
+    );
+
+    _jumpComponent = SpriteComponent(
+      sprite: Sprite(Flame.images.fromCache('bunny_2_jump.png')),
+      scale: Vector2.all(0.3),
+      anchor: Anchor.bottomCenter,
+      position: Vector2.zero(),
+    );
+
+    add(_idleComponent);
+  }
+
+  @override
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    _velocity = Vector3(0, 0, _velocity.z);
+
+    if (keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
+      if (isFlippedHorizontally) flipHorizontally();
+      _velocity.y = -bPlayerSpeed;
+    } else if (keysPressed.contains(LogicalKeyboardKey.arrowDown)) {
+      if (!isFlippedHorizontally) flipHorizontally();
+      _velocity.y = bPlayerSpeed;
+    } else if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
+      if (!isFlippedHorizontally) flipHorizontally();
+      _velocity.x = -bPlayerSpeed;
+    } else if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+      if (isFlippedHorizontally) flipHorizontally();
+      _velocity.x = bPlayerSpeed;
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.space) && !_isFalling) {
+      _velocity.z = bPlayerSpeed * 10;
+    }
+
+    return true;
+  }
+
+  @override
+  void update(double dt) {
+    if (_position3D.z < -20) _onFallOff();
+    _updateZVelocity();
+    _updateXYPosition(dt);
+    _updateZPosition(dt);
+    _updateCostume();
+    _updatePositionAndPriority();
+  }
+
+  void _updateZVelocity() {
+    if (_velocity.z > -bBlockSize.y * 0.5 / bPlayerSpeed) _velocity.z -= 0.75;
+  }
+
+  void _updateXYPosition(double dt) {
+    final newPos = _position3D + Vector3(_velocity.x * dt, _velocity.y * dt, 0);
+
+    if (world.level.fetchBlock(newPos) == null) {
+      _position3D.x = newPos.x;
+      _position3D.y = newPos.y;
+    } else {
+      _velocity.x = 0;
+      _velocity.y = 0;
+    }
+  }
+
+  void _updateZPosition(double dt) {
+    final newPos = _position3D + Vector3(0, 0, _velocity.z * dt);
+
+    if (world.level.fetchBlock(newPos) == null) {
+      _position3D.z = newPos.z;
+      _isFalling = true;
+    } else {
+      if (_velocity.z < 0) _position3D.z = _position3D.z.floorToDouble();
+      _velocity.z = 0;
+      _isFalling = false;
+    }
+  }
+
+  void _updateCostume() {
+    if (_isFalling) {
+      if (_idleComponent.parent != null) remove(_idleComponent);
+      if (_walkComponent.parent != null) remove(_walkComponent);
+      if (_jumpComponent.parent == null) add(_jumpComponent);
+    } else if (_velocity.x != 0 || _velocity.y != 0) {
+      if (_jumpComponent.parent != null) remove(_jumpComponent);
+      if (_idleComponent.parent != null) remove(_idleComponent);
+      if (_walkComponent.parent == null) add(_walkComponent);
+    } else if (_velocity.x == 0 && _velocity.y == 0 && !_isFalling) {
+      if (_jumpComponent.parent != null) remove(_jumpComponent);
+      if (_walkComponent.parent != null) remove(_walkComponent);
+      if (_idleComponent.parent == null) add(_idleComponent);
+    }
+  }
+
+  void _onFallOff() {
+    _position3D = Vector3.copy(world.level.startPosition);
+  }
+
+  void _updatePositionAndPriority() {
+    position = _position3D.toIsometricPosition;
+    priority = _position3D.isometricPriority;
+  }
+}

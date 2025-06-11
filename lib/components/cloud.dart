@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:bunny_befuddle/components/_components.dart';
+import 'package:bunny_befuddle/config.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 
@@ -14,19 +14,28 @@ import 'package:flame/flame.dart';
 /// Once the cloud moves off the sky, it will remove itself from the parent
 /// and add a new cloud to the parent.
 ///
-/// The cloud will also move with the player in a parallax way.
+/// The cloud will also move with the camera in a parallax way.
 ///
 /// {@endtemplate}
-class BCloudComponent extends SpriteComponent
-    with HasWorldReference<BLevelWorld> {
+class BCloudComponent extends SpriteComponent {
   /// {@macro BCloudComponent}
-  BCloudComponent({this.isSpawn = false});
+  BCloudComponent({
+    required this.skySize,
+    required this.cameraPosition,
+    this.isSpawn = false,
+  });
 
   /// Whether the cloud is a spawn of a cloud that has moved off the sky.
   ///
   /// When true, the cloud will start from the right side of the sky.
   /// When false, the cloud will start from a random x position.
   final bool isSpawn;
+
+  /// The size of the sky.
+  final Vector2 skySize;
+
+  /// The position of the camera.
+  final Vector2 Function() cameraPosition;
 
   late double _depthFactor;
   late Vector2 _relativePosition;
@@ -45,19 +54,28 @@ class BCloudComponent extends SpriteComponent
     if (_random.nextBool()) flipHorizontallyAroundCenter();
 
     _relativePosition = Vector2(
-      isSpawn ? 0 : _random.nextInt(world.size.x.toInt()).toDouble(),
-      _random.nextInt(world.size.y.toInt()).toDouble(),
+      (isSpawn
+              ? 0
+              : _random.nextInt((skySize.x + size.x).toInt()) - size.x * 0.5)
+          .toDouble(),
+      _random.nextInt(skySize.y.toInt()).toDouble(),
     );
   }
 
   @override
   void update(double dt) {
-    position = _relativePosition - world.playerPosition * _depthFactor;
-    _relativePosition.x += _depthFactor * 50 * dt;
+    position = _relativePosition - cameraPosition() * _depthFactor;
+    _relativePosition.x += _depthFactor * bCloudSpeed * dt;
 
-    if (_relativePosition.x > world.size.x) {
+    if (_relativePosition.x > (skySize.x + size.x * 0.5)) {
       parent?.remove(this);
-      parent?.add(BCloudComponent(isSpawn: true));
+      parent?.add(
+        BCloudComponent(
+          skySize: skySize,
+          cameraPosition: cameraPosition,
+          isSpawn: true,
+        ),
+      );
     }
   }
 }

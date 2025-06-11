@@ -10,16 +10,25 @@ import 'package:flame/flame.dart';
 /// A component that renders a number of clouds that move across the
 /// screen.
 ///
+/// ### About clouds:
+/// {@macro BCloudComponent}
+///
 /// {@endtemplate}
-class BSkyComponent extends PositionComponent
-    with HasWorldReference<BLevelWorld> {
+class BSkyComponent extends PositionComponent {
   /// {@macro BSkyComponent}
-  BSkyComponent({required this.numberOfClouds});
+  BSkyComponent({
+    required this.numberOfClouds,
+    required this.cameraPosition,
+    required super.size,
+  });
 
   /// The number of clouds at any given time.
   ///
   /// Note: Not all the clouds will be within the camera's viewport.
   final int numberOfClouds;
+
+  /// The position of the camera.
+  final Vector2 Function() cameraPosition;
 
   @override
   FutureOr<void> onLoad() async {
@@ -31,9 +40,6 @@ class BSkyComponent extends PositionComponent
     ]);
 
     anchor = Anchor.topLeft;
-    size = world.size;
-    position = Vector2.zero();
-    priority = -1;
 
     add(
       RectangleComponent(
@@ -44,7 +50,7 @@ class BSkyComponent extends PositionComponent
     );
 
     for (var i = 0; i < numberOfClouds; i++) {
-      add(BCloudComponent());
+      add(BCloudComponent(skySize: size, cameraPosition: cameraPosition));
     }
   }
 }

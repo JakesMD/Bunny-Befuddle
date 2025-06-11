@@ -20,11 +20,11 @@ extension BVector3X on Vector3 {
 
   /// Projects the 3D position onto a 2D plane isometrically.
   Vector2 get toIsometricPosition {
-    final xOffset = Vector2(x * _bHalfTileSize.x, x * _bHalfTileSize.y);
+    final xOffset = Vector2(x * _bHalfBlockSize.x, x * _bHalfBlockSize.y);
 
-    final yOffset = Vector2(-y * _bHalfTileSize.x, y * _bHalfTileSize.y);
+    final yOffset = Vector2(-y * _bHalfBlockSize.x, y * _bHalfBlockSize.y);
 
-    final zOffset = Vector2(0, -z * bTileSize.y);
+    final zOffset = Vector2(0, -z * bBlockSize.y);
 
     return Vector2(
       xOffset.x + yOffset.x + zOffset.x,
@@ -33,4 +33,4 @@ extension BVector3X on Vector3 {
   }
 }
 
-final Vector2 _bHalfTileSize = bTileSize * 0.5;
+final Vector2 _bHalfBlockSize = bBlockSize * 0.5;

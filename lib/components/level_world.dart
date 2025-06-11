@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:bunny_befuddle/components/_components.dart';
+import 'package:bunny_befuddle/config.dart';
 import 'package:bunny_befuddle/models/_models.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 
 /// {@template BLevelWorld}
 ///
@@ -14,27 +16,51 @@ class BLevelWorld extends World with HasGameReference {
   BLevelWorld({required this.level, required this.camera});
 
   /// The level that is being played.
-  BLevel level;
+  final BLevel level;
 
   /// The camera that is viewing the world.
   ///
   /// The world must be added to this camera.
   final CameraComponent camera;
 
-  /// The current position of the player in the 2D world.
-  Vector2 get playerPosition => Vector2.zero();
-
   /// The size of the 2D world.
-  Vector2 get size => game.size * 3;
+  Vector2 get size {
+    final tempSize = level.isometricSize + bBlockSize * 10;
+    if (tempSize.x < game.size.x) tempSize.x = game.size.x;
+    if (tempSize.y < game.size.y) tempSize.y = game.size.y;
+    return tempSize;
+  }
 
   @override
   FutureOr<void> onLoad() {
-    add(BSkyComponent(numberOfClouds: 50));
-
     for (final block in level.blocks()) {
       add(BBlockComponent.fromEntity(block));
     }
 
-    camera.moveTo(size * 0.5);
+    final bunny = BBunnyComponent();
+    add(bunny);
+
+    _setupCamera();
+    camera.follow(bunny);
+  }
+
+  @override
+  void onGameResize(Vector2 size) {
+    _setupCamera();
+    super.onGameResize(size);
+  }
+
+  void _setupCamera() {
+    camera.backdrop
+      ..removeWhere((c) => c is BSkyComponent)
+      ..add(
+        BSkyComponent(
+          numberOfClouds: 50,
+          cameraPosition: () => camera.viewfinder.position,
+          size: size,
+        ),
+      );
+
+    camera.setBounds(Rectangle.fromCenter(size: size, center: Vector2.zero()));
   }
 }

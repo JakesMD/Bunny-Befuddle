@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:bunny_befuddle/config.dart';
+import 'package:bunny_befuddle/extensions/_extensions.dart';
 import 'package:bunny_befuddle/models/_models.dart';
 import 'package:flame/game.dart';
 
@@ -14,6 +18,21 @@ class BLevel {
       map[0].length.toDouble(),
       map.length.toDouble(),
     );
+
+    isometricSize =
+        Vector2(
+          max(
+                Vector3(size.x, 0, 0).toIsometricPosition.x.abs(),
+                Vector3(0, size.y, 0).toIsometricPosition.x.abs(),
+              ) *
+              2,
+          max(
+                Vector3(0, 0, size.z).toIsometricPosition.y.abs(),
+                Vector3(size.x, size.y, 0).toIsometricPosition.y.abs(),
+              ) *
+              2,
+        ) +
+        bBlockSize;
 
     _entityMap = [];
 
@@ -47,8 +66,30 @@ class BLevel {
   /// Numbers >= 200 represent collectable items.
   final List<List<List<int>>> map;
 
-  /// The length of the x, y, and z axes of the level in entities.
+  /// The length of the x, y, and z axes of the level in blocks.
   late final Vector3 size;
+
+  /// The size of the level in isometric coordinates.
+  ///
+  /// This is used to calculate the size of the world / camera bounds.
+  ///
+  /// The width is the maximum between the center and the left/right sides,
+  /// multiplied by 2.
+  /// This means that the actual width of the level may be smaller than this
+  /// width. In the case of a square, this width will be the same as the actual
+  /// width.
+  ///
+  /// The height is the maximum between the center and the top/bottom sides,
+  /// multiplied by 2.
+  /// This means that the actual height of the level may be smaller than this
+  /// height. In the case of a cube, this height will be the same as the actual
+  /// height.
+  ///
+  /// The reason for calculating this in this "strange" way is to ensure that
+  /// the level is always visible in the camera which has it's center at zero.
+  /// The center of the level is not at zero, meaning that the camera would not
+  /// be able to see the entire level if we did not compensate.
+  late final Vector2 isometricSize;
 
   late final List<List<List<BWorldEntity>>> _entityMap;
 
@@ -63,21 +104,19 @@ class BLevel {
     }
   }
 
-  /// Fetches the proximity of blocks around the given position.
-  BBlockProximity fetchProximity(Vector3 position) {
+  /// Fetches the block at the given position.
+  BWorldEntity? fetchBlock(Vector3 position) {
     final z = position.z.floor();
     final y = position.y.floor();
     final x = position.x.floor();
 
-    if (!_isWithinBounds(x, y, z)) {
-      return const BBlockProximity(isBlockWithin: false, isBlockBelow: false);
-    }
+    if (!_isWithinBounds(x, y, z)) return null;
 
-    return BBlockProximity(
-      isBlockWithin: _entityMap[z][y][x].type == BWorldEntityType.block,
-      isBlockBelow:
-          z > 0 && _entityMap[z - 1][y][x].type == BWorldEntityType.block,
-    );
+    final entity = _entityMap[z][y][x];
+
+    if (entity.type != BWorldEntityType.block) return null;
+
+    return _entityMap[z][y][x];
   }
 
   /// Fetches the collectable item at the given position.

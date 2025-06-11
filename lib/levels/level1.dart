@@ -15,7 +15,7 @@ const _1_ = 201;
 
 /// The data required to build level 1.
 final bLevel1 = BLevel(
-  startPosition: Vector3(5, 5, 5),
+  startPosition: Vector3(8.5, 9.5, 11),
   map: [
     // Story 0
     [
