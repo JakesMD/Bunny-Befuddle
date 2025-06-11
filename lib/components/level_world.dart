@@ -31,12 +31,22 @@ class BLevelWorld extends World with HasGameReference {
     return tempSize;
   }
 
+  /// The position of the player in 3D space.
+  Vector3 get playerPosition3D => _bunny.position3D.clone();
+
   late final BBunnyComponent _bunny;
+
+  /// Adds a carrot to the score.
+  void addCarrot() {}
 
   @override
   FutureOr<void> onLoad() {
     for (final block in level.blocks()) {
       add(BBlockComponent.fromEntity(block));
+    }
+
+    for (final collectable in level.collectables()) {
+      add(BCollectableComponent.fromEntity(collectable));
     }
 
     _bunny = BBunnyComponent();
@@ -45,7 +55,7 @@ class BLevelWorld extends World with HasGameReference {
     _setupCamera();
     camera.follow(_bunny);
     camera.viewport.add(
-      BControls(
+      BControlsComponent(
         onLeftPressed: _bunny.moveLeft,
         onRightPressed: _bunny.moveRight,
         onForwardPressed: _bunny.moveForward,

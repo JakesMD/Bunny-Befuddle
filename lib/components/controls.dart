@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:bunny_befuddle/components/_components.dart';
 import 'package:flame/components.dart';
 
-/// {@template BControls}
+/// {@template BControlsComponent}
 ///
 /// A component that contains the control buttons.
 ///
 /// {@endtemplate}
-class BControls extends PositionComponent {
-  /// {@macro BControls}
-  BControls({
+class BControlsComponent extends PositionComponent {
+  /// {@macro BControlsComponent}
+  BControlsComponent({
     required this.onLeftPressed,
     required this.onRightPressed,
     required this.onForwardPressed,
@@ -38,40 +38,40 @@ class BControls extends PositionComponent {
   /// The function to call when the jump button is pressed.
   final void Function() onJumpPressed;
 
-  late final BControlButton _leftButton;
-  late final BControlButton _rightButton;
-  late final BControlButton _forwardButton;
-  late final BControlButton _backwardButton;
+  late final BControlButtonComponent _leftButton;
+  late final BControlButtonComponent _rightButton;
+  late final BControlButtonComponent _forwardButton;
+  late final BControlButtonComponent _backwardButton;
 
-  late final BControlButton _jumpButton;
+  late final BControlButtonComponent _jumpButton;
 
   @override
   FutureOr<void> onLoad() {
-    _leftButton = BControlButton(
+    _leftButton = BControlButtonComponent(
       imageSrc: 'control_left.png',
       onPressed: onLeftPressed,
       onReleased: onDirectionReleased,
     );
 
-    _rightButton = BControlButton(
+    _rightButton = BControlButtonComponent(
       imageSrc: 'control_right.png',
       onPressed: onRightPressed,
       onReleased: onDirectionReleased,
     );
 
-    _forwardButton = BControlButton(
+    _forwardButton = BControlButtonComponent(
       imageSrc: 'control_forward.png',
       onPressed: onForwardPressed,
       onReleased: onDirectionReleased,
     );
 
-    _backwardButton = BControlButton(
+    _backwardButton = BControlButtonComponent(
       imageSrc: 'control_backward.png',
       onPressed: onBackwardPressed,
       onReleased: onDirectionReleased,
     );
 
-    _jumpButton = BControlButton(
+    _jumpButton = BControlButtonComponent(
       imageSrc: 'control_jump.png',
       onPressed: onJumpPressed,
     );

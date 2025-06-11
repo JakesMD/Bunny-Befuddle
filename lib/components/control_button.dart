@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 
-/// {@template BControlButton}
+/// {@template BControlButtonComponent}
 ///
 /// A button with the control image.
 ///
 /// {@endtemplate}
-class BControlButton extends SpriteComponent with TapCallbacks {
-  /// {@macro BControlButton}
-  BControlButton({
+class BControlButtonComponent extends SpriteComponent with TapCallbacks {
+  /// {@macro BControlButtonComponent}
+  BControlButtonComponent({
     required this.imageSrc,
     required this.onPressed,
     this.onReleased,

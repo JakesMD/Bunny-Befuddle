@@ -93,16 +93,23 @@ class BLevel {
 
   late final List<List<List<BWorldEntity>>> _entityMap;
 
-  /// Returns an iterable of all the blocks in the level.
-  Iterable<BWorldEntity> blocks() sync* {
+  /// Returns an iterable of all the entities in the level of the given type.
+  Iterable<BWorldEntity> entitiesOfType(BWorldEntityType type) sync* {
     for (final z in _entityMap) {
       for (final y in z) {
         for (final x in y) {
-          if (x.type == BWorldEntityType.block) yield x;
+          if (x.type == type) yield x;
         }
       }
     }
   }
+
+  /// Returns an iterable of all the blocks in the level.
+  Iterable<BWorldEntity> blocks() => entitiesOfType(BWorldEntityType.block);
+
+  /// Returns an iterable of all the collectable items in the level.
+  Iterable<BWorldEntity> collectables() =>
+      entitiesOfType(BWorldEntityType.collectable);
 
   /// Fetches the block at the given position.
   BWorldEntity? fetchBlock(Vector3 position) {

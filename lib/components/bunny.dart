@@ -19,6 +19,9 @@ class BBunnyComponent extends PositionComponent
   late SpriteAnimationComponent _idleComponent;
   late SpriteComponent _jumpComponent;
 
+  /// The position of the bunny in 3D space.
+  Vector3 get position3D => _position3D;
+
   @override
   Future<void> onLoad() async {
     await Flame.images.loadAll([
@@ -129,15 +132,17 @@ class BBunnyComponent extends PositionComponent
   @override
   void update(double dt) {
     if (_position3D.z < -20) _onFallOff();
-    _updateZVelocity();
+    _updateZVelocity(dt);
     _updateXYPosition(dt);
     _updateZPosition(dt);
     _updateCostume();
     _updatePositionAndPriority();
   }
 
-  void _updateZVelocity() {
-    if (_velocity.z > -bBlockSize.y * 0.5 / bPlayerSpeed) _velocity.z -= 0.75;
+  void _updateZVelocity(double dt) {
+    if (_velocity.z > -bBlockSize.y * 0.5 / bPlayerSpeed) {
+      _velocity.z -= 0.75;
+    }
   }
 
   void _updateXYPosition(double dt) {
