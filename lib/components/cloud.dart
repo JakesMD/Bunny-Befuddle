@@ -54,10 +54,8 @@ class BCloudComponent extends SpriteComponent {
     if (_random.nextBool()) flipHorizontallyAroundCenter();
 
     _relativePosition = Vector2(
-      (isSpawn
-              ? 0
-              : _random.nextInt((skySize.x + size.x).toInt()) - size.x * 0.5)
-          .toDouble(),
+      (isSpawn ? 0 : _random.nextInt((skySize.x + size.x).toInt())).toDouble() -
+          size.x * 0.5,
       _random.nextInt(skySize.y.toInt()).toDouble(),
     );
   }
