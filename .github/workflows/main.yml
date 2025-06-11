@@ -19,7 +19,7 @@ concurrency:
 
 
 jobs:      
-  code-check-and-deploy:
+  build-and-deploy:
     permissions: write-all
     runs-on: ubuntu-latest
 
