@@ -66,27 +66,62 @@ class BBunnyComponent extends PositionComponent
     add(_idleComponent);
   }
 
+  /// Makes the bunny jump if not already in the air.
+  void jump() {
+    if (!_isFalling) _velocity.z = bPlayerSpeed * 10;
+  }
+
+  /// Moves the bunny in the negative x direction.
+  void moveLeft() {
+    if (!isFlippedHorizontally) flipHorizontally();
+    _velocity.y = 0;
+    _velocity.x = -bPlayerSpeed;
+  }
+
+  /// Moves the bunny in the positive x direction.
+  void moveRight() {
+    if (isFlippedHorizontally) flipHorizontally();
+    _velocity.y = 0;
+    _velocity.x = bPlayerSpeed;
+  }
+
+  /// Moves the bunny in the negative y direction.
+  void moveBackward() {
+    if (isFlippedHorizontally) flipHorizontally();
+    _velocity.x = 0;
+    _velocity.y = -bPlayerSpeed;
+  }
+
+  /// Moves the bunny in the positive y direction.
+  void moveForward() {
+    if (!isFlippedHorizontally) flipHorizontally();
+    _velocity.x = 0;
+    _velocity.y = bPlayerSpeed;
+  }
+
+  /// Stops the bunny from moving.
+  void standStill() {
+    _velocity.x = 0;
+    _velocity.y = 0;
+  }
+
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     _velocity = Vector3(0, 0, _velocity.z);
 
     if (keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
-      if (isFlippedHorizontally) flipHorizontally();
-      _velocity.y = -bPlayerSpeed;
+      moveBackward();
     } else if (keysPressed.contains(LogicalKeyboardKey.arrowDown)) {
-      if (!isFlippedHorizontally) flipHorizontally();
-      _velocity.y = bPlayerSpeed;
+      moveForward();
     } else if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
-      if (!isFlippedHorizontally) flipHorizontally();
-      _velocity.x = -bPlayerSpeed;
+      moveLeft();
     } else if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
-      if (isFlippedHorizontally) flipHorizontally();
-      _velocity.x = bPlayerSpeed;
+      moveRight();
+    } else {
+      standStill();
     }
 
-    if (keysPressed.contains(LogicalKeyboardKey.space) && !_isFalling) {
-      _velocity.z = bPlayerSpeed * 10;
-    }
+    if (keysPressed.contains(LogicalKeyboardKey.space)) jump();
 
     return true;
   }
@@ -148,6 +183,7 @@ class BBunnyComponent extends PositionComponent
 
   void _onFallOff() {
     _position3D = Vector3.copy(world.level.startPosition);
+    _velocity = Vector3.zero();
   }
 
   void _updatePositionAndPriority() {

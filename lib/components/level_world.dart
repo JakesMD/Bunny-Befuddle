@@ -31,17 +31,29 @@ class BLevelWorld extends World with HasGameReference {
     return tempSize;
   }
 
+  late final BBunnyComponent _bunny;
+
   @override
   FutureOr<void> onLoad() {
     for (final block in level.blocks()) {
       add(BBlockComponent.fromEntity(block));
     }
 
-    final bunny = BBunnyComponent();
-    add(bunny);
+    _bunny = BBunnyComponent();
+    add(_bunny);
 
     _setupCamera();
-    camera.follow(bunny);
+    camera.follow(_bunny);
+    camera.viewport.add(
+      BControls(
+        onLeftPressed: _bunny.moveLeft,
+        onRightPressed: _bunny.moveRight,
+        onForwardPressed: _bunny.moveForward,
+        onBackwardPressed: _bunny.moveBackward,
+        onDirectionReleased: _bunny.standStill,
+        onJumpPressed: _bunny.jump,
+      ),
+    );
   }
 
   @override
@@ -60,7 +72,6 @@ class BLevelWorld extends World with HasGameReference {
           size: size,
         ),
       );
-
     camera.setBounds(Rectangle.fromCenter(size: size, center: Vector2.zero()));
   }
 }
