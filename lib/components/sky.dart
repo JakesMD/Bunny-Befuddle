@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:bunny_befuddle/components/_components.dart';
+import 'package:bunny_befuddle/config.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 
@@ -16,16 +17,7 @@ import 'package:flame/flame.dart';
 /// {@endtemplate}
 class BSkyComponent extends PositionComponent {
   /// {@macro BSkyComponent}
-  BSkyComponent({
-    required this.numberOfClouds,
-    required this.cameraPosition,
-    required super.size,
-  });
-
-  /// The number of clouds at any given time.
-  ///
-  /// Note: Not all the clouds will be within the camera's viewport.
-  final int numberOfClouds;
+  BSkyComponent({required this.cameraPosition, required super.size});
 
   /// The position of the camera.
   final Vector2 Function() cameraPosition;
@@ -49,7 +41,7 @@ class BSkyComponent extends PositionComponent {
       ),
     );
 
-    for (var i = 0; i < numberOfClouds; i++) {
+    for (var i = 0; i < bNumberOfClouds; i++) {
       add(BCloudComponent(skySize: size, cameraPosition: cameraPosition));
     }
   }

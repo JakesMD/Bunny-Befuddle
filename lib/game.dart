@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:bunny_befuddle/components/_components.dart';
 import 'package:bunny_befuddle/levels/_levels.dart';
+import 'package:bunny_befuddle/worlds/_worlds.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_audio/flame_audio.dart';

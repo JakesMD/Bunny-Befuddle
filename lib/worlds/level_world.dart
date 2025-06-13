@@ -77,7 +77,6 @@ class BLevelWorld extends World with HasGameReference {
       ..removeWhere((c) => c is BSkyComponent)
       ..add(
         BSkyComponent(
-          numberOfClouds: 50,
           cameraPosition: () => camera.viewfinder.position,
           size: size,
         ),

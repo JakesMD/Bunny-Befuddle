@@ -1,6 +1,6 @@
-import 'package:bunny_befuddle/components/_components.dart';
 import 'package:bunny_befuddle/config.dart';
 import 'package:bunny_befuddle/extensions/_extensions.dart';
+import 'package:bunny_befuddle/worlds/_worlds.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +11,9 @@ import 'package:flutter/services.dart';
 /// keyboard inputs.
 class BBunnyComponent extends PositionComponent
     with KeyboardHandler, HasWorldReference<BLevelWorld> {
+  /// The position of the bunny in 3D space.
+  Vector3 get position3D => _position3D;
+
   late Vector3 _position3D;
   Vector3 _velocity = Vector3.zero();
   bool _isFalling = false;
@@ -18,9 +21,6 @@ class BBunnyComponent extends PositionComponent
   late SpriteAnimationComponent _walkComponent;
   late SpriteAnimationComponent _idleComponent;
   late SpriteComponent _jumpComponent;
-
-  /// The position of the bunny in 3D space.
-  Vector3 get position3D => _position3D;
 
   @override
   Future<void> onLoad() async {
@@ -71,35 +71,35 @@ class BBunnyComponent extends PositionComponent
 
   /// Makes the bunny jump if not already in the air.
   void jump() {
-    if (!_isFalling) _velocity.z = bPlayerSpeed * 10;
+    if (!_isFalling) _velocity.z = bPlayerJumpVelocity;
   }
 
   /// Moves the bunny in the negative x direction.
   void moveLeft() {
     if (!isFlippedHorizontally) flipHorizontally();
     _velocity.y = 0;
-    _velocity.x = -bPlayerSpeed;
+    _velocity.x = -bPlayerWalkVelocity;
   }
 
   /// Moves the bunny in the positive x direction.
   void moveRight() {
     if (isFlippedHorizontally) flipHorizontally();
     _velocity.y = 0;
-    _velocity.x = bPlayerSpeed;
+    _velocity.x = bPlayerWalkVelocity;
   }
 
   /// Moves the bunny in the negative y direction.
   void moveBackward() {
     if (isFlippedHorizontally) flipHorizontally();
     _velocity.x = 0;
-    _velocity.y = -bPlayerSpeed;
+    _velocity.y = -bPlayerWalkVelocity;
   }
 
   /// Moves the bunny in the positive y direction.
   void moveForward() {
     if (!isFlippedHorizontally) flipHorizontally();
     _velocity.x = 0;
-    _velocity.y = bPlayerSpeed;
+    _velocity.y = bPlayerWalkVelocity;
   }
 
   /// Stops the bunny from moving.
@@ -131,7 +131,7 @@ class BBunnyComponent extends PositionComponent
 
   @override
   void update(double dt) {
-    if (_position3D.z < -20) _onFallOff();
+    if (_position3D.z < bNegativeZLimit) _onFallOff();
     _updateZVelocity(dt);
     _updateXYPosition(dt);
     _updateZPosition(dt);
@@ -139,11 +139,8 @@ class BBunnyComponent extends PositionComponent
     _updatePositionAndPriority();
   }
 
-  void _updateZVelocity(double dt) {
-    if (_velocity.z > -bBlockSize.y * 0.5 / bPlayerSpeed) {
-      _velocity.z -= 0.75;
-    }
-  }
+  void _updateZVelocity(double dt) =>
+      _velocity.z -= bGravitationalAcceleration * dt;
 
   void _updateXYPosition(double dt) {
     final newPos = _position3D + Vector3(_velocity.x * dt, _velocity.y * dt, 0);
@@ -155,7 +152,12 @@ class BBunnyComponent extends PositionComponent
   }
 
   void _updateZPosition(double dt) {
-    final newPos = _position3D + Vector3(0, 0, _velocity.z * dt);
+    var velocityZ = _velocity.z * dt;
+    if (velocityZ * dt < -bBlockSize.y * 0.5 / bPlayerWalkVelocity) {
+      velocityZ = -bBlockSize.y * 0.5 / bPlayerWalkVelocity;
+    }
+
+    final newPos = _position3D + Vector3(0, 0, velocityZ);
 
     if (world.level.fetchBlock(newPos) == null) {
       _position3D.z = newPos.z;

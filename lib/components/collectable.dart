@@ -1,7 +1,7 @@
-import 'package:bunny_befuddle/components/_components.dart';
 import 'package:bunny_befuddle/config.dart';
 import 'package:bunny_befuddle/extensions/_extensions.dart';
 import 'package:bunny_befuddle/models/_models.dart';
+import 'package:bunny_befuddle/worlds/_worlds.dart';
 import 'package:flame/components.dart';
 
 /// {@template BCollectableComponent}

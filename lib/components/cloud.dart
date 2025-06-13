@@ -69,7 +69,7 @@ class BCloudComponent extends SpriteComponent {
   @override
   void update(double dt) {
     position = _relativePosition - cameraPosition() * _depthFactor;
-    _relativePosition.x += _depthFactor * bCloudSpeed * dt;
+    _relativePosition.x += _depthFactor * bCloudVelocity * dt;
 
     if (_relativePosition.x > (skySize.x + size.x * 0.5)) {
       parent?.remove(this);
