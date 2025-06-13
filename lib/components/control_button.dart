@@ -14,6 +14,7 @@ class BControlButtonComponent extends SpriteComponent with TapCallbacks {
     required this.imageSrc,
     required this.onPressed,
     this.onReleased,
+    super.position,
   });
 
   /// The source of the image to use for the button.

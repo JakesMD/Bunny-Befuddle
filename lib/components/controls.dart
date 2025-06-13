@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:bunny_befuddle/components/_components.dart';
 import 'package:flame/components.dart';
@@ -38,37 +39,43 @@ class BControlsComponent extends PositionComponent {
   /// The function to call when the jump button is pressed.
   final void Function() onJumpPressed;
 
-  late final BControlButtonComponent _leftButton;
-  late final BControlButtonComponent _rightButton;
-  late final BControlButtonComponent _forwardButton;
-  late final BControlButtonComponent _backwardButton;
-
+  late final PositionComponent _directionButtons;
   late final BControlButtonComponent _jumpButton;
 
   @override
   FutureOr<void> onLoad() {
-    _leftButton = BControlButtonComponent(
+    final leftButton = BControlButtonComponent(
       imageSrc: 'control_left.png',
       onPressed: onLeftPressed,
       onReleased: onDirectionReleased,
+      position: Vector2(-40, 0),
     );
 
-    _rightButton = BControlButtonComponent(
+    final rightButton = BControlButtonComponent(
       imageSrc: 'control_right.png',
       onPressed: onRightPressed,
       onReleased: onDirectionReleased,
+      position: Vector2(40, 0),
     );
 
-    _forwardButton = BControlButtonComponent(
+    final forwardButton = BControlButtonComponent(
       imageSrc: 'control_forward.png',
       onPressed: onForwardPressed,
       onReleased: onDirectionReleased,
+      position: Vector2(0, 40),
     );
 
-    _backwardButton = BControlButtonComponent(
+    final backwardButton = BControlButtonComponent(
       imageSrc: 'control_backward.png',
       onPressed: onBackwardPressed,
       onReleased: onDirectionReleased,
+      position: Vector2(0, -40),
+    );
+
+    _directionButtons = PositionComponent(
+      children: [leftButton, rightButton, forwardButton, backwardButton],
+      angle: 0.25 * pi,
+      anchor: Anchor.center,
     );
 
     _jumpButton = BControlButtonComponent(
@@ -76,20 +83,14 @@ class BControlsComponent extends PositionComponent {
       onPressed: onJumpPressed,
     );
 
-    add(_leftButton);
-    add(_rightButton);
-    add(_forwardButton);
-    add(_backwardButton);
+    add(_directionButtons);
     add(_jumpButton);
   }
 
   @override
   void onGameResize(Vector2 size) {
-    _leftButton.position = Vector2(80, size.y - 120);
-    _rightButton.position = Vector2(160, size.y - 120);
-    _forwardButton.position = Vector2(120, size.y - 80);
-    _backwardButton.position = Vector2(120, size.y - 160);
-    _jumpButton.position = Vector2(size.x - 80, size.y - 120);
+    _directionButtons.position = Vector2(80, size.y - 120);
+    _jumpButton.position = Vector2(size.x - 60, size.y - 120);
     super.onGameResize(size);
   }
 }
