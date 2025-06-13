@@ -18,6 +18,9 @@ class BGame extends FlameGame with HasKeyboardHandlerComponents {
     add(
       RouterComponent(
         routes: {
+          'level-map': WorldRoute(
+            () => BLevelWorld(level: bLevelMap, camera: camera),
+          ),
           'level1': WorldRoute(
             () => BLevelWorld(level: bLevel1, camera: camera),
           ),

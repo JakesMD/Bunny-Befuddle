@@ -10,6 +10,9 @@ const bCloudVelocity = 50.0;
 const bPlayerWalkVelocity = 2.0;
 
 /// The speed the player jumps in pixels per tick.
+///
+/// Note: The player should not be able to jump up 3 stories and along 3 blocks,
+///       because otherwise the player could skip levels.
 const bPlayerJumpVelocity = 25.0;
 
 /// The number of clouds in the sky at any given time.
