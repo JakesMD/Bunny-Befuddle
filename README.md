@@ -3,8 +3,10 @@ An isometric platformer game using Flame in Dart.
 
 ![Screenshot of Bunny Befuddle](screenshot.png)
 
+Hop around the floating islands and collect carrots. But it's not all that easy when there are optical illusions...
+
 ## [Click to play!](https://jakesmd.github.io/Bunny-Befuddle/)
-Play in your browser on your computer or smartphone.
+Play in the browser on your computer or smartphone.
 
 ## Why?
 It's been a long time since I last developed a game, and I'm excited to get back into it. I was just a kid developing games with Kivy in Python when I first discovered Flutter, and I've been developing plain old Flutter apps ever since.
