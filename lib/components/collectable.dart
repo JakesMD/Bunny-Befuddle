@@ -38,7 +38,7 @@ class BCollectableComponent extends SpriteComponent
 
     if (posFloored == playerPosFloored) {
       removeFromParent();
-      world.addCarrot();
+      world.incrementScore();
     }
   }
 }

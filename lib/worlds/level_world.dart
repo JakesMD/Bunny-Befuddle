@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bunny_befuddle/components/_components.dart';
 import 'package:bunny_befuddle/config.dart';
+import 'package:bunny_befuddle/game.dart';
 import 'package:bunny_befuddle/models/_models.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
@@ -11,9 +12,13 @@ import 'package:flame/experimental.dart';
 /// The world that contains the level.
 ///
 /// {@endtemplate}
-class BLevelWorld extends World with HasGameReference {
+class BLevelWorld extends World with HasGameReference<BGame> {
   /// {@macro BLevelWorld}
-  BLevelWorld({required this.level, required this.camera});
+  BLevelWorld({
+    required this.level,
+    required this.camera,
+    required this.nextLevel,
+  });
 
   /// The level that is being played.
   final BLevel level;
@@ -22,6 +27,9 @@ class BLevelWorld extends World with HasGameReference {
   ///
   /// The world must be added to this camera.
   final CameraComponent camera;
+
+  /// The name of the route to go to after the level is completed.
+  final String nextLevel;
 
   /// The size of the 2D world.
   Vector2 get size {
@@ -34,10 +42,29 @@ class BLevelWorld extends World with HasGameReference {
   /// The position of the player in 3D space.
   Vector3 get playerPosition3D => _bunny.position3D.clone();
 
+  /// Whether the level is complete.
+  bool get isLevelComplete => _score == level.numberOfCollectables;
+
   late final BBunnyComponent _bunny;
 
+  int _score = 0;
+
+  final _collectables = <BCollectableComponent>[];
+
   /// Adds a carrot to the score.
-  void addCarrot() {}
+  void incrementScore() => _score++;
+
+  /// Moves to the next level.
+  void goToNextLevel() => game.router.pushReplacementNamed(nextLevel);
+
+  /// Resets the level.
+  void reset() {
+    _score = 0;
+    _bunny.reset();
+    for (final collectable in _collectables) {
+      if (collectable.isRemoved) add(collectable);
+    }
+  }
 
   @override
   FutureOr<void> onLoad() {
@@ -46,8 +73,10 @@ class BLevelWorld extends World with HasGameReference {
     }
 
     for (final collectable in level.collectables()) {
-      add(BCollectableComponent.fromEntity(collectable));
+      _collectables.add(BCollectableComponent.fromEntity(collectable));
     }
+
+    addAll(_collectables);
 
     _bunny = BBunnyComponent();
     add(_bunny);

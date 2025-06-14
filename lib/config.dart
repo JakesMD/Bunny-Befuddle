@@ -25,3 +25,15 @@ const bGravitationalAcceleration = 50;
 
 /// The maximum number of blocks below story 0 the player can fall before dying.
 const bNegativeZLimit = -20;
+
+/// The ID of the red frame block asset.
+const bRedFrameBlockNumber = 68;
+
+/// The ID of the green frame block asset.
+const bGreenFrameBlockNumber = 69;
+
+/// The ID of the red puzzle block asset.
+const bRedPuzzleBlockNumber = 72;
+
+/// The ID of the green puzzle block asset.
+const bGreenPuzzleBlockNumber = 73;

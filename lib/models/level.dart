@@ -50,6 +50,8 @@ class BLevel {
         }
       }
     }
+
+    numberOfCollectables = collectables().length;
   }
 
   /// The starting position of the player.
@@ -90,6 +92,9 @@ class BLevel {
   /// The center of the level is not at zero, meaning that the camera would not
   /// be able to see the entire level if we did not compensate.
   late final Vector2 isometricSize;
+
+  /// The number of collectable items in the level.
+  late final int numberOfCollectables;
 
   late final List<List<List<BWorldEntity>>> _entityMap;
 

@@ -108,6 +108,12 @@ class BBunnyComponent extends PositionComponent
     _velocity.y = 0;
   }
 
+  /// Resets the bunny to its initial position and velocity.
+  void reset() {
+    _position3D = Vector3.copy(world.level.startPosition);
+    _velocity = Vector3.zero();
+  }
+
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     _velocity = Vector3(0, 0, _velocity.z);
@@ -131,7 +137,7 @@ class BBunnyComponent extends PositionComponent
 
   @override
   void update(double dt) {
-    if (_position3D.z < bNegativeZLimit) _onFallOff();
+    if (_position3D.z < bNegativeZLimit) world.reset();
     _updateZVelocity(dt);
     _updateXYPosition(dt);
     _updateZPosition(dt);
@@ -183,11 +189,6 @@ class BBunnyComponent extends PositionComponent
       if (_walkComponent.parent != null) remove(_walkComponent);
       if (_idleComponent.parent == null) add(_idleComponent);
     }
-  }
-
-  void _onFallOff() {
-    _position3D = Vector3.copy(world.level.startPosition);
-    _velocity = Vector3.zero();
   }
 
   void _updatePositionAndPriority() {
